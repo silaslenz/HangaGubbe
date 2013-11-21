@@ -11,22 +11,22 @@
         android:id="@+id/imageView"
         android:src="#00ceff" />
 
-    <EditText
+    <!--android:enabled="false"-->
+
+
+    <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
         android:id="@+id/txv_word"
-        android:layout_gravity="left|center_vertical"
-        android:text="_ _ _ _ _"
-        android:editable="true" />
-        <!--android:enabled="false"-->
 
-
+        android:layout_gravity="left|center_vertical" />
 
     <GridLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_gravity="left|center_vertical"
-        android:visibility=""
         android:id="@+id/buttonGrid">
 
         <Button
