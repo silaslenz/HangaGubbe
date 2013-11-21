@@ -5,23 +5,33 @@ import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+    public String current_word = "apkalas";
+    public TextView txv_word;
+    public TextView txv_lives;
+    public int livesLeft = 5;
+    public GridLayout btnGrid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        lineCounter("word");
         setContentView(R.layout.game_activity);
+        btnGrid = (GridLayout) findViewById(R.id.buttonGrid);
+        txv_word = (TextView) findViewById(R.id.txv_word);
+        txv_lives = (TextView) findViewById(R.id.textView);
+        txv_word.setText(lineCounter(current_word));
+
     }
 
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        final String current_word = "apkalas";
+
         final Button buttona = (Button) findViewById(R.id.button_a);
         final Button buttonb = (Button) findViewById(R.id.button_b);
         final Button buttonc = (Button) findViewById(R.id.button_c);
@@ -71,10 +81,58 @@ public class MainActivity extends Activity {
             }
         });
         return true;
+    }*/
+    public void disableSomething(View view) {
+        Button b = (Button) view;
+        b.setEnabled(false);
+        String buttonText = b.getText().toString().toLowerCase();
+        int location = -1;
+        boolean endofword = false;
+        String word=txv_word.getText().toString();
+        char[] wordArray = word.toCharArray();
+        while (endofword == false) {
+            if (current_word.contains(buttonText)) {
+                location = current_word.indexOf(buttonText, location + 1);
+                System.out.println(location);
+                //System.out.println(txv_word.getText().charAt(location*2));
+                //txv_word.getText().toString().
+
+                if (location >= 0) {
+                    //System.out.println(changeCharInPosition((location*2), 'a',word ));
+                    wordArray[location*2] = buttonText.toCharArray()[0];
+                }
+
+            }
+
+            else {
+                livesLeft -= 1;
+                txv_lives.setText(Integer.toString(livesLeft));
+
+                if (livesLeft ==0 ) {
+                    txv_lives.setText("Game Over");
+                    btnGrid.setVisibility(View.GONE);
+                }
+            }
+            if (location < 0) {
+                endofword = true;
+            }
+            txv_word.setText(new String(wordArray));
+        }
     }
-    public void lineCounter (String word){
-        TextView txv_word = (TextView) findViewById(R.id.txv_word);
-        txv_word.setText("ssss");
+
+   // public String changeCharInPosition(int position, char ch, String str) {
+
+
+    //    return new String(charArray);
+    //}
+
+    public String lineCounter(String word) {
+        String lines = "";
+        for (int i = 1; i <= word.length(); i++) {
+            lines = lines + "_ ";
+            //System.out.println(i);
+        }
+        return lines;
     }
 
 }
