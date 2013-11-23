@@ -5,6 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        android:layout_gravity="center">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="Vinster"
+            android:id="@+id/txv_wins" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="förluster"
+            android:id="@+id/txv_losses" />
+    </LinearLayout>
+
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="131dp"
@@ -351,7 +372,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="New Text"
-            android:id="@+id/textView"
+            android:id="@+id/txv_lives"
             android:layout_row="12"
             android:layout_column="12" />
     </GridLayout>
