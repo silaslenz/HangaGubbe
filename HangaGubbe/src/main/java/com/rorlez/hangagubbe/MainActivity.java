@@ -1,51 +1,108 @@
 package com.rorlez.hangagubbe;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.app.Activity;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Random;
+
 public class MainActivity extends Activity {
-    public String current_word = "apkalas";
+    public String current_word = "";
     public TextView txv_word;
-    public TextView txv_lives;
+    public TextView txv_wins;
+    public TextView txv_losses;
+    //public TextView txv_lives;
+    public TextView txv_game_done;
     public int livesLeft = 5;
-    public GridLayout btnGrid;
+    //public GridLayout btnGrid;
     public static final String PREFS_NAME = "MyPreferences";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Laddar in rätt layout när den startar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity);
-        btnGrid = (GridLayout) findViewById(R.id.buttonGrid);
-        txv_word = (TextView) findViewById(R.id.txv_word);
-        txv_lives = (TextView) findViewById(R.id.textView);
-        txv_word.setText(lineCounter(current_word));
+        wordRandomizer();
+        // Läser in txv_word och sätter texten i txv_word som streck för current_word
+        // btnGrid = (GridLayout) findViewById(R.id.buttonGrid);
 
+
+    }
+
+    public void wordRandomizer() {
+        //String word="";
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("http://silenz.se/hangman/words");
+                    URLConnection con = url.openConnection();
+                    InputStream in = con.getInputStream();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    byte[] buf = new byte[8192];
+                    int len;
+                    while ((len = in.read(buf)) != -1) {
+                        baos.write(buf, 0, len);
+                    }
+                    String body = new String(baos.toByteArray(), "UTF-8");
+                    Random ran = new Random();
+                    int x = ran.nextInt(body.length() - body.replace("&", "").length()) +1;
+                    System.out.println(x+"momnkey"+(body.length() - body.replace("&", "").length()));
+
+                    final String abc = body.split("&")[x].split("&")[0];
+                    current_word = abc;
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            txv_word = (TextView) findViewById(R.id.txv_word);
+                            //txv_lives = (TextView) findViewById(R.id.txv_lives);
+                            txv_word.setText(lineCounter(abc));                        }
+                    });
+
+                } catch (Exception e) {
+                    System.out.println("fail");
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
     }
 
     public void startGame(View view) {
-        livesLeft=5;
+        //Nollställer livräknaren
+        livesLeft = 5;
+
+        //Byter till själva spelets layout, ifall den skulle vara fel (andra omgången)
         setContentView(R.layout.game_activity);
-        btnGrid = (GridLayout) findViewById(R.id.buttonGrid);
+        wordRandomizer();
+        //btnGrid = (GridLayout) findViewById(R.id.buttonGrid);
+        //Sätter streck för ordet till txv_word
         txv_word = (TextView) findViewById(R.id.txv_word);
-        txv_lives = (TextView) findViewById(R.id.textView);
-        txv_word.setText(lineCounter(current_word));
+        //txv_lives = (TextView) findViewById(R.id.txv_lives);
         txv_word.setText(lineCounter(current_word));
     }
+
     public void disableSomething(View view) {
+        //Läser in knappen som tryckts och deaktiverar den
         Button b = (Button) view;
+        b.setEnabled(false);
+        //Läser in data med vinster och förluster
         final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        b.setEnabled(false);
+        //Kollar vilken knapp som tryckts in
         String buttonText = b.getText().toString().toLowerCase();
+        //Förbereder för att leta plats på bokstaven
         int location = -1;
         boolean endofword = false;
-        String word=txv_word.getText().toString();
+        String word = txv_word.getText().toString();
         char[] wordArray = word.toCharArray();
         while (endofword == false) {
             if (current_word.contains(buttonText)) {
@@ -56,20 +113,24 @@ public class MainActivity extends Activity {
 
                 if (location >= 0) {
                     //System.out.println(changeCharInPosition((location*2), 'a',word ));
-                    wordArray[location*2] = buttonText.toCharArray()[0];
+                    wordArray[location * 2] = buttonText.toCharArray()[0];
                 }
 
-            }
-
-            else {
+            } else {
                 livesLeft -= 1;
-                txv_lives.setText(Integer.toString(livesLeft));
+                //txv_lives.setText(Integer.toString(livesLeft));
 
-                if (livesLeft ==0 ) {
-                    txv_lives.setText("Game Over");
+                if (livesLeft == 0) {
+                    //txv_lives.setText("Game Over");
                     int losses = settings.getInt("losses", 0);
-                    editor.putInt("losses", (losses+=1));
-                    setContentView(R.layout.game_over);
+                    editor.putInt("losses", (losses += 1));
+                    editor.commit();
+
+                    setContentView(R.layout.game_done);
+                    txv_losses = (TextView) findViewById(R.id.txv_losses);
+                    txv_losses.setText(Integer.toString(losses));
+                    txv_game_done = (TextView) findViewById(R.id.txv_game_done);
+                    txv_game_done.setText("Du hittade inte ordet");
                 }
             }
             if (location < 0) {
@@ -79,17 +140,23 @@ public class MainActivity extends Activity {
 
             editor.commit();
         }
-        if (word.contains("_")){
+        word = txv_word.getText().toString();
+        if (word.contains("_ ")) {
 
-        }
-        else{
+        } else {
             int wins = settings.getInt("wins", 0);
-            editor.putInt("wins", (wins+=1));
-            setContentView(R.layout.game_over);
+            editor.putInt("wins", (wins += 1));
+            editor.commit();
+            setContentView(R.layout.game_done);
+            txv_wins = (TextView) findViewById(R.id.txv_wins);
+            txv_wins.setText(Integer.toString(wins));
+            txv_game_done = (TextView) findViewById(R.id.txv_game_done);
+            txv_game_done.setText("Du hittade ordet");
         }
     }
 
-   // public String changeCharInPosition(int position, char ch, String str) {
+
+    // public String changeCharInPosition(int position, char ch, String str) {
 
 
     //    return new String(charArray);
