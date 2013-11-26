@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
@@ -19,11 +19,16 @@ public class MainActivity extends Activity {
     public TextView txv_word;
     public TextView txv_wins;
     public TextView txv_losses;
+    public TextView txv_not_found_word;
     //public TextView txv_lives;
     public TextView txv_game_done;
     public int livesLeft = 5;
+    public ImageView img_hangman;
+
     //public GridLayout btnGrid;
     public static final String PREFS_NAME = "MyPreferences";
+    int losses;
+    int wins;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,7 @@ public class MainActivity extends Activity {
         wordRandomizer();
         // Läser in txv_word och sätter texten i txv_word som streck för current_word
         // btnGrid = (GridLayout) findViewById(R.id.buttonGrid);
+
 
 
     }
@@ -72,7 +78,6 @@ public class MainActivity extends Activity {
                 }
             }
         });
-
         thread.start();
     }
 
@@ -131,6 +136,19 @@ public class MainActivity extends Activity {
                     txv_losses.setText(Integer.toString(losses));
                     txv_game_done = (TextView) findViewById(R.id.txv_game_done);
                     txv_game_done.setText("Du hittade inte ordet");
+                    losses = settings.getInt("losses", 0);
+                    wins = settings.getInt("wins", 0);
+                    editor.putInt("losses", (losses += 1));
+                    editor.commit();
+                    setContentView(R.layout.game_done);
+                    txv_losses = (TextView) findViewById(R.id.txv_losses);
+                    txv_losses.setText("Förluster: " + Integer.toString(losses));
+                    txv_wins = (TextView) findViewById(R.id.txv_wins);
+                    txv_wins.setText("Vinster: " + Integer.toString(wins));
+                    txv_game_done = (TextView) findViewById(R.id.txv_game_done);
+                    txv_game_done.setText("Du hittade inte ordet");
+                    txv_not_found_word = (TextView) findViewById(R.id.txv_not_found_word);
+                    txv_not_found_word.setText("Ordet var: " + current_word);
                 }
             }
             if (location < 0) {
@@ -145,11 +163,16 @@ public class MainActivity extends Activity {
 
         } else {
             int wins = settings.getInt("wins", 0);
+            wins = settings.getInt("wins", 0);
+            losses = settings.getInt("losses", 0);
             editor.putInt("wins", (wins += 1));
             editor.commit();
             setContentView(R.layout.game_done);
             txv_wins = (TextView) findViewById(R.id.txv_wins);
             txv_wins.setText(Integer.toString(wins));
+            txv_wins.setText("Vinster: " + Integer.toString(wins));
+            txv_losses = (TextView) findViewById(R.id.txv_losses);
+            txv_losses.setText("Förluster: " + Integer.toString(losses));
             txv_game_done = (TextView) findViewById(R.id.txv_game_done);
             txv_game_done.setText("Du hittade ordet");
         }

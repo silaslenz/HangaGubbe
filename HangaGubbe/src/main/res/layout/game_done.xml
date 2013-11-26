@@ -41,4 +41,10 @@
             android:text="förluster"
             android:id="@+id/txv_losses" />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txv_not_found_word"
+        android:layout_gravity="center" />
 </LinearLayout>
