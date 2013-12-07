@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Hänga Gubbe</string>
+    <string name="app_name">Hänga Hästen</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="losses">Förluster: </string>
+    <string name="wrongword">"Du hittade inte ordet. \nRätt ord var "</string>
 
 </resources>

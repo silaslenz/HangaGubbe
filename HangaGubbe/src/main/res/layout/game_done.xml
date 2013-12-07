@@ -5,46 +5,75 @@
     android:layout_height="match_parent">
 
 
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="131dp"
+        android:id="@+id/img_manViewLost"
+        android:background="@drawable/image_background" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="gameover"
-        android:id="@+id/txv_game_done"
-        android:layout_gravity="center" />
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_card"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txv_game_done"
+
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text=""
+            android:textColor="#404040"
+            android:textSize="18dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_card">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Vinster"
+            android:id="@+id/txv_wins"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textColor="#404040"
+            android:textSize="18dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="förluster"
+            android:id="@+id/txv_losses"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textColor="#404040"
+            android:textSize="18dp"/>
+    </LinearLayout>
+
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Starta om"
+        android:text="Spela igen"
         android:id="@+id/btn_restart"
         android:layout_gravity="center"
         android:onClick="startGame"/>
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="20dp"
-        android:layout_gravity="center">
 
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:text="Vinster"
-            android:id="@+id/txv_wins" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:text="förluster"
-            android:id="@+id/txv_losses" />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/txv_not_found_word"
-        android:layout_gravity="center" />
 </LinearLayout>

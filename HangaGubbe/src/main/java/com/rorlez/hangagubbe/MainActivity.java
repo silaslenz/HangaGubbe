@@ -2,7 +2,9 @@ package com.rorlez.hangagubbe;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,16 +21,11 @@ public class MainActivity extends Activity {
     public TextView txv_word;
     public TextView txv_wins;
     public TextView txv_losses;
-    public TextView txv_not_found_word;
     //public TextView txv_lives;
     public TextView txv_game_done;
-    public int livesLeft = 5;
-    public ImageView img_hangman;
-
+    public int livesLeft = 8;
     //public GridLayout btnGrid;
     public static final String PREFS_NAME = "MyPreferences";
-    int losses;
-    int wins;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +37,6 @@ public class MainActivity extends Activity {
         // btnGrid = (GridLayout) findViewById(R.id.buttonGrid);
 
 
-
     }
 
     public void wordRandomizer() {
@@ -49,7 +45,7 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://silenz.se/hangman/words");
+                    URL url = new URL("http://vps.silenz.se/words");
                     URLConnection con = url.openConnection();
                     InputStream in = con.getInputStream();
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -60,16 +56,18 @@ public class MainActivity extends Activity {
                     }
                     String body = new String(baos.toByteArray(), "UTF-8");
                     Random ran = new Random();
-                    int x = ran.nextInt(body.length() - body.replace("&", "").length()) +1;
-                    System.out.println(x+"momnkey"+(body.length() - body.replace("&", "").length()));
+                    int x = ran.nextInt(body.length() - body.replace("&", "").length()) + 1;
+                    System.out.println(x + "momnkey" + (body.length() - body.replace("&", "").length()));
 
                     final String abc = body.split("&")[x].split("&")[0];
                     current_word = abc;
                     runOnUiThread(new Runnable() {
                         public void run() {
+
                             txv_word = (TextView) findViewById(R.id.txv_word);
                             //txv_lives = (TextView) findViewById(R.id.txv_lives);
-                            txv_word.setText(lineCounter(abc));                        }
+                            txv_word.setText(lineCounter(abc));
+                        }
                     });
 
                 } catch (Exception e) {
@@ -78,12 +76,13 @@ public class MainActivity extends Activity {
                 }
             }
         });
+
         thread.start();
     }
 
     public void startGame(View view) {
         //Nollställer livräknaren
-        livesLeft = 5;
+        livesLeft = 8;
 
         //Byter till själva spelets layout, ifall den skulle vara fel (andra omgången)
         setContentView(R.layout.game_activity);
@@ -123,32 +122,30 @@ public class MainActivity extends Activity {
 
             } else {
                 livesLeft -= 1;
+                ImageView image = (ImageView) findViewById(R.id.img_manView);
                 //txv_lives.setText(Integer.toString(livesLeft));
-
+                Resources r = getResources();
+                int imagefile = r.getIdentifier("horse_" + Integer.toString(livesLeft), "drawable", "com.rorlez.hangagubbe");
+                //int imagefile = r.getResources().getIdentifier("testimage", "drawable", "your.package.name");
+                image.setImageResource(imagefile);
                 if (livesLeft == 0) {
                     //txv_lives.setText("Game Over");
                     int losses = settings.getInt("losses", 0);
+                    int wins = settings.getInt("wins", 0);
                     editor.putInt("losses", (losses += 1));
                     editor.commit();
 
                     setContentView(R.layout.game_done);
-                    txv_losses = (TextView) findViewById(R.id.txv_losses);
-                    txv_losses.setText(Integer.toString(losses));
-                    txv_game_done = (TextView) findViewById(R.id.txv_game_done);
-                    txv_game_done.setText("Du hittade inte ordet");
-                    losses = settings.getInt("losses", 0);
-                    wins = settings.getInt("wins", 0);
-                    editor.putInt("losses", (losses += 1));
-                    editor.commit();
-                    setContentView(R.layout.game_done);
-                    txv_losses = (TextView) findViewById(R.id.txv_losses);
-                    txv_losses.setText("Förluster: " + Integer.toString(losses));
+
+                    ImageView img_manViewLost = (ImageView) findViewById(R.id.img_manViewLost);
+                    img_manViewLost.setImageResource(R.drawable.horse_lasagna);
+
                     txv_wins = (TextView) findViewById(R.id.txv_wins);
                     txv_wins.setText("Vinster: " + Integer.toString(wins));
+                    txv_losses = (TextView) findViewById(R.id.txv_losses);
+                    txv_losses.setText(Html.fromHtml(getString(R.string.losses)) + Integer.toString(losses));
                     txv_game_done = (TextView) findViewById(R.id.txv_game_done);
-                    txv_game_done.setText("Du hittade inte ordet");
-                    txv_not_found_word = (TextView) findViewById(R.id.txv_not_found_word);
-                    txv_not_found_word.setText("Ordet var: " + current_word);
+                    txv_game_done.setText(Html.fromHtml(getString(R.string.wrongword)) + current_word);
                 }
             }
             if (location < 0) {
@@ -163,27 +160,22 @@ public class MainActivity extends Activity {
 
         } else {
             int wins = settings.getInt("wins", 0);
-            wins = settings.getInt("wins", 0);
-            losses = settings.getInt("losses", 0);
             editor.putInt("wins", (wins += 1));
+            int losses = settings.getInt("losses", 0);
             editor.commit();
             setContentView(R.layout.game_done);
             txv_wins = (TextView) findViewById(R.id.txv_wins);
-            txv_wins.setText(Integer.toString(wins));
             txv_wins.setText("Vinster: " + Integer.toString(wins));
             txv_losses = (TextView) findViewById(R.id.txv_losses);
-            txv_losses.setText("Förluster: " + Integer.toString(losses));
+            txv_losses.setText(Html.fromHtml(getString(R.string.losses)) + Integer.toString(losses));
             txv_game_done = (TextView) findViewById(R.id.txv_game_done);
             txv_game_done.setText("Du hittade ordet");
+
+            ImageView img_manViewLost = (ImageView) findViewById(R.id.img_manViewLost);
+            img_manViewLost.setImageResource(R.drawable.horse_saved);
+
         }
     }
-
-
-    // public String changeCharInPosition(int position, char ch, String str) {
-
-
-    //    return new String(charArray);
-    //}
 
     public String lineCounter(String word) {
         String lines = "";

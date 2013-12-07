@@ -8,10 +8,11 @@
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="131dp"
-        android:id="@+id/img_hangman"
-        android:src="@drawable/background" />
+        android:id="@+id/img_manView"
+        android:background="@drawable/image_background" />
 
     <!--android:enabled="false"-->
+
 
     <TextView
         android:layout_width="fill_parent"
